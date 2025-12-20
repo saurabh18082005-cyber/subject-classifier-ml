@@ -1,6 +1,6 @@
 # Subject Classifier using Machine Learning
-
-🔗 **Live Demo:** https://subject-classifier-ml.onrender.com
+## 🚀 Live Demo
+https://subject-classifier-ml.onrender.com
 
 > ⚠️ Note: First request may take a few seconds due to free hosting sleep.
 
