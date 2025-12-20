@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Subject Classifier</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #020617;
+      --text: #e5e7eb;
+      --accent: #38bdf8;
+      --success: #22c55e;
+    }
+
+    body.light {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #020617;
+      --accent: #2563eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", system-ui;
+    }
+
+    body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+
+  /* IMAGE-LIKE BACKGROUND */
+  background:
+    radial-gradient(circle at top left, #38bdf8, transparent 40%),
+    radial-gradient(circle at bottom right, #22c55e, transparent 40%),
+    linear-gradient(120deg, #020617, #020617);
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  padding: 22px;
+  margin: 16px;
+
+  border-radius: 18px;
+  background: rgba(2, 6, 23, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+
+  animation: fadeIn 0.7s ease;
+}
+
+
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      opacity: 0.8;
+      margin-bottom: 20px;
+    }
+
+    textarea {
+  width: 100%;
+  min-height: 90px;
+  max-height: 160px;
+
+  resize: none;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+
+  font-size: 14px;
+  line-height: 1.4;
+
+  background: #020617;
+  color: white;
+}
+
+
+    body.light textarea {
+      background: #e5e7eb;
+      color: black;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.03);
+      opacity: 0.9;
+    }
+
+    .result {
+      margin-top: 20px;
+      display: none;
+      animation: slideUp 0.4s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: var(--accent);
+      color: white;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .bar {
+      height: 10px;
+      background: #334155;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--success);
+      transition: width 0.5s;
+    }
+
+    .toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+    @media (max-width: 480px) {
+  h1 {
+    font-size: 22px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 11px;
+  }
+
+  .toggle {
+    font-size: 12px;
+    top: 12px;
+    right: 12px;
+  }
+}
+
+  </style>
+</head>
+
+<body>
+  <div class="toggle" onclick="toggleTheme()">🌙 / ☀️</div>
+
+  <div class="card">
+    <h1>Subject Classifier</h1>
+    <div class="subtitle">ML-powered academic subject prediction</div>
+
+    <textarea id="text" placeholder="Enter a sentence..."></textarea>
+
+    <button onclick="predict()">Predict Subject</button>
+
+    <div class="result" id="result">
+      <div class="badge" id="subject"></div>
+      <div>Confidence: <span id="confidence"></span>%</div>
+      <div class="bar">
+        <div class="bar-fill" id="bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle("light");
+    }
+
+    function predict() {
+      const text = document.getElementById("text").value.trim();
+      if (!text) return;
+
+      fetch("/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("subject").innerText = data.prediction;
+        document.getElementById("confidence").innerText = data.confidence;
+        document.getElementById("bar").style.width = data.confidence + "%";
+        document.getElementById("result").style.display = "block";
+      });
+    }
+  </script>
+</body>
+</html>
