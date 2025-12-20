@@ -1,31 +1,35 @@
-## How to Run
+# Subject Classifier using Machine Learning
 
-1. Clone the repository
-2. Create a virtual environment
-3. Install dependencies:
-4. Run the application:
-5. Open your browser and visit:
+🔗 **Live Demo:** https://subject-classifier-ml.onrender.com
 
-## Example Inputs
+> ⚠️ Note: First request may take a few seconds due to free hosting sleep.
 
-- **Physics**:  
-  `Force equals mass times acceleration`
+---
 
-- **Biology**:  
-  `DNA carries genetic information`
+## 📌 Project Overview
+This project classifies an input sentence into subjects such as Biology,
+Physics, Chemistry, Mathematics, and Computer Science using Machine Learning.
 
-- **Chemistry**:  
-  `Acids donate protons in reactions`
+---
 
-- **Math**:  
-  `Derivatives measure rate of change`
+## ⚙️ Tech Stack
+- Python
+- Flask
+- Scikit-learn
+- HTML, CSS, JavaScript
+- Render (Deployment)
 
-- **Computer Science**:
-- ## Project Overview
+---
 
-This project is a machine learning based web application that classifies an input sentence into academic subjects such as Biology, Physics, Chemistry, Math, and Computer Science.
+## 🚀 Features
+- Subject classification with confidence score
+- Responsive UI (mobile + desktop)
+- Dark/Light mode
+- Real-time prediction using Flask API
 
-The model is trained using balanced datasets and uses TF-IDF vectorization with a Naive Bayes classifier. Flask is used to connect the machine learning model with a web-based frontend.
+---
 
-  `Algorithms solve problems efficiently`
-
+## ▶️ How to Run Locally
+```bash
+pip install -r requirements.txt
+python app.py
