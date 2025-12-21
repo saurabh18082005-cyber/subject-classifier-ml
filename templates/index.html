@@ -2,23 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Subject Classifier</title>
+  <title>AI Subject Classifier</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
     :root {
-      --bg: #0f172a;
-      --card: #020617;
       --text: #e5e7eb;
       --accent: #38bdf8;
       --success: #22c55e;
+      --card-dark: rgba(2, 6, 23, 0.75);
+      --card-light: rgba(255, 255, 255, 0.9);
+      --overlay-dark: rgba(0,0,0,0.55);
+      --overlay-light: rgba(0, 0, 0, 0.35);
     }
 
     body.light {
-      --bg: #f8fafc;
-      --card: #ffffff;
       --text: #020617;
-      --accent: #2563eb;
     }
 
     * {
@@ -30,95 +29,166 @@
       margin: 0;
       min-height: 100vh;
       color: var(--text);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: 0.3s;
-
-      background:
-        radial-gradient(circle at top left, #38bdf8, transparent 40%),
-        radial-gradient(circle at bottom right, #22c55e, transparent 40%),
-        linear-gradient(120deg, #020617, #020617);
+      overflow: hidden;
     }
 
-    .wrapper {
+    /* 🎥 VIDEO BACKGROUND */
+    .video-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+    }
+
+    .video-bg video {
       width: 100%;
-      max-width: 420px;
-      margin: 16px;
+      height: 100%;
+      object-fit: cover;
     }
 
-    /* ===== HERO SECTION ===== */
-    .hero {
-      text-align: center;
-      margin-bottom: 18px;
-      animation: fadeIn 0.8s ease;
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--overlay-dark);
+      z-index: -1;
+      transition: 0.3s;
     }
 
-    .hero img {
-      width: 120px;
-      max-width: 60%;
+    body.light .overlay {
+      background: var(--overlay-light);
+    }
+
+    /* LAYOUT */
+    .container {
+      display: flex;
+      min-height: 100vh;
+      padding: 40px;
+      gap: 40px;
+    }
+
+    /* LEFT PANEL */
+    .info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .info h1 {
+      font-size: 40px;
       margin-bottom: 10px;
     }
 
-    .hero h1 {
-      margin: 6px 0;
-      font-size: 26px;
-    }
-
-    .hero-text {
-      font-size: 14px;
+    .info p {
+      line-height: 1.6;
       opacity: 0.85;
-      max-width: 360px;
-      margin: 0 auto 6px;
+      margin-bottom: 16px;
     }
 
-    .hero-sub {
-      font-size: 12px;
-      opacity: 0.65;
+    .steps div {
+      margin-bottom: 6px;
     }
 
-    /* ===== CARD ===== */
-    .card {
+    .subjects {
+      margin-top: 10px;
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    /* ✅ FIX LEFT TEXT VISIBILITY IN LIGHT MODE */
+    body.light .info {
+      color: #f8fafc;
+    }
+
+    body.light .info p {
+      opacity: 0.95;
+    }
+
+    body.light .steps div {
+      opacity: 0.9;
+    }
+
+    /* FEEDBACK + RATING */
+    .extras {
+      margin-top: 30px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .box {
+      flex: 1;
+      min-width: 220px;
+      padding: 15px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(8px);
+    }
+
+    body.light .box {
+      background: rgba(0,0,0,0.05);
+    }
+
+    .stars span {
+      font-size: 24px;
+      cursor: pointer;
+      color: #94a3b8;
+    }
+
+    .stars span.active {
+      color: gold;
+    }
+
+    textarea.feedback {
       width: 100%;
-      padding: 22px;
-      border-radius: 18px;
-      background: rgba(2, 6, 23, 0.7);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
-      animation: fadeIn 0.7s ease;
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+      resize: none;
     }
 
-    h2 {
+    .feedback-msg {
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--success);
+    }
+
+    .box button {
+      margin-top: 10px;
+    }
+
+    /* RIGHT CARD */
+    .card {
+      width: 480px;
+      padding: 30px;
+      border-radius: 18px;
+      background: var(--card-dark);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+    }
+
+    body.light .card {
+      background: var(--card-light);
+    }
+
+    .card h2 {
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .subtitle {
       text-align: center;
-      font-size: 14px;
-      opacity: 0.8;
-      margin-bottom: 20px;
+      opacity: 0.7;
+      margin-bottom: 18px;
     }
 
-    textarea {
+    textarea#text {
       width: 100%;
-      min-height: 90px;
-      max-height: 160px;
-      resize: none;
+      min-height: 120px;
       padding: 12px;
       border-radius: 10px;
       border: none;
       outline: none;
-      font-size: 14px;
-      line-height: 1.4;
-      background: #020617;
-      color: white;
-    }
-
-    body.light textarea {
-      background: #e5e7eb;
-      color: black;
     }
 
     button {
@@ -131,18 +201,11 @@
       color: white;
       font-size: 15px;
       cursor: pointer;
-      transition: transform 0.2s, opacity 0.2s;
-    }
-
-    button:hover {
-      transform: scale(1.03);
-      opacity: 0.9;
     }
 
     .result {
-      margin-top: 20px;
+      margin-top: 18px;
       display: none;
-      animation: slideUp 0.4s ease;
     }
 
     .badge {
@@ -152,7 +215,7 @@
       background: var(--accent);
       color: white;
       font-weight: bold;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
     }
 
     .bar {
@@ -160,7 +223,6 @@
       background: #334155;
       border-radius: 10px;
       overflow: hidden;
-      margin-top: 8px;
     }
 
     .bar-fill {
@@ -170,60 +232,90 @@
       transition: width 0.5s;
     }
 
+    /* TOGGLE */
     .toggle {
       position: fixed;
-      top: 16px;
-      right: 16px;
+      top: 20px;
+      right: 20px;
       cursor: pointer;
-      font-size: 14px;
-      opacity: 0.8;
+      font-size: 18px;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 480px) {
-      .hero h1 { font-size: 22px; }
-      .hero-text { font-size: 13px; }
-      button { font-size: 14px; }
+    @media (max-width: 900px) {
+      .container {
+        flex-direction: column;
+      }
+      .card {
+        width: 100%;
+      }
     }
   </style>
 </head>
 
 <body>
+
+  <!-- 🎥 VIDEO -->
+  <div class="video-bg">
+    <video autoplay muted loop playsinline>
+      <source src="/static/bg.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="overlay"></div>
+
   <div class="toggle" onclick="toggleTheme()">🌙 / ☀️</div>
 
-  <div class="wrapper">
-    <!-- HERO -->
-    <div class="hero">
-      <img
-        src="https://media.giphy.com/media/3o7TKxOh2vL7n3nZKM/giphy.gif"
-        alt="Learning animation"
-      />
-      <h1>Subject Classifier</h1>
-      <p class="hero-text">
-        Paste any academic sentence below and this app will intelligently
-        predict which subject it belongs to.
+  <div class="container">
+
+    <!-- LEFT -->
+    <div class="info">
+      <h1>AI Subject Classifier</h1>
+      <p>
+        Paste any academic sentence and our machine learning model
+        will instantly predict which subject it belongs to.
       </p>
-      <p class="hero-sub">
-        Biology · Physics · Chemistry · Math · Computer Science
-      </p>
+
+      <div class="steps">
+        <div>1️⃣ Enter a sentence</div>
+        <div>2️⃣ Click Predict</div>
+        <div>3️⃣ Get subject & confidence</div>
+      </div>
+
+      <div class="subjects">
+        Supports: Biology, Physics, Chemistry, Math, Computer Science
+      </div>
+
+      <!-- FEEDBACK -->
+      <div class="extras">
+
+        <div class="box">
+          <strong>⭐ Rate this app</strong>
+          <div class="stars" id="stars">
+            <span onclick="rate(1)">★</span>
+            <span onclick="rate(2)">★</span>
+            <span onclick="rate(3)">★</span>
+            <span onclick="rate(4)">★</span>
+            <span onclick="rate(5)">★</span>
+          </div>
+          <button onclick="submitRating()">Submit</button>
+          <div class="feedback-msg" id="ratingMsg"></div>
+        </div>
+
+        <div class="box">
+          <strong>💬 Feedback</strong>
+          <textarea class="feedback" id="feedbackText" rows="3" placeholder="Your feedback..."></textarea>
+          <button onclick="submitFeedback()">Submit</button>
+          <div class="feedback-msg" id="feedbackMsg"></div>
+        </div>
+
+      </div>
     </div>
 
-    <!-- CARD -->
+    <!-- RIGHT -->
     <div class="card">
       <h2>Try it now</h2>
-      <div class="subtitle">ML-powered academic subject prediction</div>
+      <div class="subtitle">ML Model + Flask API</div>
 
-      <textarea id="text" placeholder="Example: Newton’s second law relates force and acceleration"></textarea>
-
+      <textarea id="text" placeholder="Enter a sentence..."></textarea>
       <button onclick="predict()">Predict Subject</button>
 
       <div class="result" id="result">
@@ -234,6 +326,7 @@
         </div>
       </div>
     </div>
+
   </div>
 
   <script>
@@ -258,6 +351,39 @@
         document.getElementById("result").style.display = "block";
       });
     }
+
+    let rating = 0;
+    function rate(val) {
+      rating = val;
+      document.querySelectorAll("#stars span").forEach((s, i) => {
+        s.classList.toggle("active", i < val);
+      });
+    }
+
+    function submitRating() {
+      if (rating === 0) {
+        alert("Please select a rating first.");
+        return;
+      }
+      document.getElementById("ratingMsg").innerText =
+        "Thanks for rating us " + rating + " ⭐";
+      rating = 0;
+      document.querySelectorAll("#stars span").forEach(s =>
+        s.classList.remove("active")
+      );
+    }
+
+    function submitFeedback() {
+      const feedback = document.getElementById("feedbackText").value.trim();
+      if (!feedback) {
+        alert("Please enter feedback.");
+        return;
+      }
+      document.getElementById("feedbackMsg").innerText =
+        "Thank you for your feedback! 😊";
+      document.getElementById("feedbackText").value = "";
+    }
   </script>
+
 </body>
 </html>
