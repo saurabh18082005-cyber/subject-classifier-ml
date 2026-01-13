@@ -80,7 +80,7 @@
 
     .info p {
       line-height: 1.6;
-      opacity: 0.85;
+      opacity: 0.9;
       margin-bottom: 16px;
     }
 
@@ -94,30 +94,17 @@
       font-weight: bold;
     }
 
-    /* ✅ FIX LEFT TEXT VISIBILITY IN LIGHT MODE */
+    /* FIX VISIBILITY IN LIGHT MODE */
     body.light .info {
       color: #f8fafc;
     }
 
-    body.light .info p {
-      opacity: 0.95;
-    }
-
-    body.light .steps div {
-      opacity: 0.9;
-    }
-
-    /* FEEDBACK + RATING */
+    /* EXAMPLES */
     .extras {
       margin-top: 30px;
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
     }
 
     .box {
-      flex: 1;
-      min-width: 220px;
       padding: 15px;
       border-radius: 12px;
       background: rgba(255,255,255,0.08);
@@ -125,36 +112,26 @@
     }
 
     body.light .box {
-      background: rgba(0,0,0,0.05);
+      background: rgba(0,0,0,0.1);
     }
 
-    .stars span {
-      font-size: 24px;
-      cursor: pointer;
-      color: #94a3b8;
-    }
-
-    .stars span.active {
-      color: gold;
-    }
-
-    textarea.feedback {
-      width: 100%;
-      margin-top: 8px;
-      padding: 8px;
-      border-radius: 8px;
-      border: none;
-      resize: none;
-    }
-
-    .feedback-msg {
-      margin-top: 6px;
-      font-size: 13px;
-      color: var(--success);
-    }
-
-    .box button {
+    .example {
       margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.08);
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .example:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    body.light .example {
+      background: rgba(0,0,0,0.08);
     }
 
     /* RIGHT CARD */
@@ -232,7 +209,6 @@
       transition: width 0.5s;
     }
 
-    /* TOGGLE */
     .toggle {
       position: fixed;
       top: 20px;
@@ -254,7 +230,7 @@
 
 <body>
 
-  <!-- 🎥 VIDEO -->
+  <!-- VIDEO -->
   <div class="video-bg">
     <video autoplay muted loop playsinline>
       <source src="/static/bg.mp4" type="video/mp4">
@@ -284,29 +260,26 @@
         Supports: Biology, Physics, Chemistry, Math, Computer Science
       </div>
 
-      <!-- FEEDBACK -->
       <div class="extras">
-
         <div class="box">
-          <strong>⭐ Rate this app</strong>
-          <div class="stars" id="stars">
-            <span onclick="rate(1)">★</span>
-            <span onclick="rate(2)">★</span>
-            <span onclick="rate(3)">★</span>
-            <span onclick="rate(4)">★</span>
-            <span onclick="rate(5)">★</span>
+          <strong>📌 Example Sentences</strong>
+
+          <div class="example" onclick="fillExample('Photosynthesis occurs in the chloroplast of plant cells.')">
+            Photosynthesis occurs in the chloroplast of plant cells.
           </div>
-          <button onclick="submitRating()">Submit</button>
-          <div class="feedback-msg" id="ratingMsg"></div>
-        </div>
 
-        <div class="box">
-          <strong>💬 Feedback</strong>
-          <textarea class="feedback" id="feedbackText" rows="3" placeholder="Your feedback..."></textarea>
-          <button onclick="submitFeedback()">Submit</button>
-          <div class="feedback-msg" id="feedbackMsg"></div>
-        </div>
+          <div class="example" onclick="fillExample('Newton’s second law relates force, mass, and acceleration.')">
+            Newton’s second law relates force, mass, and acceleration.
+          </div>
 
+          <div class="example" onclick="fillExample('The periodic table organizes elements based on atomic number.')">
+            The periodic table organizes elements based on atomic number.
+          </div>
+
+          <div class="example" onclick="fillExample('SQL is used to retrieve and manipulate data in relational databases.')">
+            SQL is used to retrieve and manipulate data in relational databases.
+          </div>
+        </div>
       </div>
     </div>
 
@@ -334,6 +307,11 @@
       document.body.classList.toggle("light");
     }
 
+    function fillExample(text) {
+      document.getElementById("text").value = text;
+      document.getElementById("text").focus();
+    }
+
     function predict() {
       const text = document.getElementById("text").value.trim();
       if (!text) return;
@@ -350,38 +328,6 @@
         document.getElementById("bar").style.width = data.confidence + "%";
         document.getElementById("result").style.display = "block";
       });
-    }
-
-    let rating = 0;
-    function rate(val) {
-      rating = val;
-      document.querySelectorAll("#stars span").forEach((s, i) => {
-        s.classList.toggle("active", i < val);
-      });
-    }
-
-    function submitRating() {
-      if (rating === 0) {
-        alert("Please select a rating first.");
-        return;
-      }
-      document.getElementById("ratingMsg").innerText =
-        "Thanks for rating us " + rating + " ⭐";
-      rating = 0;
-      document.querySelectorAll("#stars span").forEach(s =>
-        s.classList.remove("active")
-      );
-    }
-
-    function submitFeedback() {
-      const feedback = document.getElementById("feedbackText").value.trim();
-      if (!feedback) {
-        alert("Please enter feedback.");
-        return;
-      }
-      document.getElementById("feedbackMsg").innerText =
-        "Thank you for your feedback! 😊";
-      document.getElementById("feedbackText").value = "";
     }
   </script>
 
